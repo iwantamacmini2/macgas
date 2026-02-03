@@ -1,0 +1,31 @@
+{
+  "projects": {
+    "e2e-test": {
+      "name": "E2E Test",
+      "programs": [],
+      "balanceLamports": 990000,
+      "totalTxs": 2,
+      "createdAt": 1770160516912,
+      "active": true,
+      "lastDeposit": {
+        "lamports": 1000000,
+        "at": 1770160516928
+      },
+      "lastTx": {
+        "signature": "2bLfbes7223dgTzczrHpfjmXcwiZTasE9JsL38XRbVPoJBXbjcNBRSXPbioQLFwdFKw4nqLmX5VX4Gq3qbF915WZ",
+        "at": 1770160913127
+      }
+    },
+    "proj_ml78fuudabu0y": {
+      "name": "Test Self-Service App",
+      "email": "test@example.com",
+      "website": null,
+      "programs": [],
+      "balanceLamports": 0,
+      "totalTxs": 0,
+      "createdAt": 1770161479141,
+      "active": true,
+      "selfService": true
+    }
+  }
+}

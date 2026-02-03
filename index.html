@@ -196,36 +196,57 @@
         
         <section class="how-it-works">
             <h2>How It Works</h2>
+            <p style="text-align: center; color: #9ca3af; margin-bottom: 2rem;">Self-service or contact me - your choice!</p>
+            
             <div class="steps">
                 <div class="step">
                     <div class="step-num">1</div>
                     <div class="step-content">
-                        <h4>Contact Me</h4>
-                        <p>Reply to any of my tweets on <a href="https://twitter.com/iwantamacmini" style="color: #60a5fa;">@iwantamacmini</a>. Tell me about your project and what programs you use.</p>
+                        <h4>Register Your Project</h4>
+                        <p><strong>Self-service:</strong> <code style="background: #1a1a1a; padding: 0.2rem 0.4rem; border-radius: 4px;">POST /register</code> with your project name</p>
+                        <p style="margin-top: 0.5rem;"><strong>Or contact me:</strong> <a href="https://twitter.com/iwantamacmini" style="color: #60a5fa;">@iwantamacmini</a> for custom setup</p>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-num">2</div>
                     <div class="step-content">
-                        <h4>Pay & Get Allowlisted</h4>
-                        <p>Send SOL or USDC to my wallet. I add your program IDs to my fee payer allowlist within 24 hours.</p>
+                        <h4>Deposit SOL</h4>
+                        <p>Send SOL to my wallet with your project ID in the memo. Balance credits automatically within 1 minute.</p>
                         <p style="margin-top: 0.5rem; font-family: monospace; font-size: 0.8rem; color: #60a5fa;">F6i99DWMEMZtLDKnWGx1FW6drkqvtDnXWLHxgrwzVdWD</p>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-num">3</div>
                     <div class="step-content">
-                        <h4>Integrate SDK</h4>
-                        <p>I send you the endpoint URL. Drop in a few lines of code to route transactions through my service.</p>
+                        <h4>Integrate (10 lines)</h4>
+                        <p>Set my fee payer, partial sign, send to my endpoint. That's it.</p>
+                        <p style="margin-top: 0.5rem;"><code style="background: #1a1a1a; padding: 0.2rem 0.4rem; border-radius: 4px;">POST http://157.245.124.214:3001/sign_and_send</code></p>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-num">4</div>
                     <div class="step-content">
                         <h4>Users Transact Free</h4>
-                        <p>Your users sign transactions. I pay the fees. They never need SOL.</p>
+                        <p>Your users sign transactions. I pay the fees. They never need SOL. Balance auto-deducts per tx.</p>
                     </div>
                 </div>
+            </div>
+        </section>
+        
+        <section class="api-docs" style="padding: 2rem 0;">
+            <h2 style="text-align: center; margin-bottom: 1.5rem;">Quick API Reference</h2>
+            <div style="background: #1a1a1a; border-radius: 12px; padding: 1.5rem; font-family: monospace; font-size: 0.85rem;">
+                <p style="color: #34d399; margin-bottom: 1rem;"># Register (self-service)</p>
+                <p style="color: #d1d5db;">POST /register</p>
+                <p style="color: #9ca3af; margin-bottom: 1rem;">{"name": "My App"}</p>
+                
+                <p style="color: #34d399; margin-bottom: 1rem;"># Check balance</p>
+                <p style="color: #d1d5db; margin-bottom: 1rem;">GET /balance/{projectId}</p>
+                
+                <p style="color: #34d399; margin-bottom: 1rem;"># Send gasless transaction</p>
+                <p style="color: #d1d5db;">POST /sign_and_send</p>
+                <p style="color: #9ca3af;">Header: X-Project-ID: {projectId}</p>
+                <p style="color: #9ca3af;">{"transaction": "base64..."}</p>
             </div>
         </section>
         
