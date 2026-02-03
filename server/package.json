@@ -1,0 +1,16 @@
+{
+  "name": "macmini-gas-station",
+  "version": "1.0.0",
+  "description": "Gasless transaction sponsorship service with prepaid credits",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs",
+    "dev": "node --watch index.mjs"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "author": "@iwantamacmini",
+  "license": "MIT"
+}
