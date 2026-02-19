@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | MacMini Gas Station</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1625;
+            --bg-secondary: #231f31;
+            --bg-card: #2a2540;
+            --accent: #a78bfa;
+            --accent-soft: #c4b5fd;
+            --text-primary: #f5f3ff;
+            --text-secondary: #a5a3b8;
+            --border: rgba(167, 139, 250, 0.2);
+            --success: #86efac;
+            --warning: #fbbf24;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { font-size: 1.5rem; margin-bottom: 8px; }
+        .subtitle { color: var(--text-secondary); margin-bottom: 24px; }
+        
+        /* Login */
+        #login-form {
+            max-width: 400px;
+            margin: 100px auto;
+            background: var(--bg-card);
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        #login-form h2 { margin-bottom: 20px; }
+        input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+        input:focus { outline: none; border-color: var(--accent); }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button:hover { background: var(--accent-soft); }
+        .error { color: #f87171; margin-top: 12px; display: none; }
+        
+        /* Dashboard */
+        #dashboard { display: none; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-soft);
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+        
+        /* Table */
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: rgba(167, 139, 250, 0.05); }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-active { background: rgba(134, 239, 172, 0.2); color: var(--success); }
+        .badge-inactive { background: rgba(248, 113, 113, 0.2); color: #f87171; }
+        .balance { color: var(--warning); }
+        .balance.zero { color: var(--text-secondary); }
+        
+        /* Refresh */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .refresh-btn {
+            width: auto;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        .last-updated {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-form">
+        <h2>🔒 Admin Access</h2>
+        <input type="password" id="admin-key" placeholder="Enter admin key">
+        <button onclick="login()">Login</button>
+        <p class="error" id="login-error">Invalid admin key</p>
+    </div>
+    
+    <div id="dashboard" class="container">
+        <div class="header-row">
+            <div>
+                <h1>⛽ MacMini Gas Station Admin</h1>
+                <p class="subtitle">Private status page</p>
+            </div>
+            <div>
+                <span class="last-updated" id="last-updated"></span>
+                <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+            </div>
+        </div>
+        
+        <div class="stats" id="stats"></div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Name / Website</th>
+                        <th>Balance</th>
+                        <th>Txs</th>
+                        <th>Created</th>
+                        <th>Last Activity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="projects-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let adminKey = localStorage.getItem('macgas_admin_key');
+        
+        if (adminKey) {
+            tryAutoLogin();
+        }
+        
+        async function tryAutoLogin() {
+            const valid = await validateKey(adminKey);
+            if (valid) {
+                showDashboard();
+            } else {
+                localStorage.removeItem('macgas_admin_key');
+            }
+        }
+        
+        async function login() {
+            adminKey = document.getElementById('admin-key').value;
+            const valid = await validateKey(adminKey);
+            if (valid) {
+                localStorage.setItem('macgas_admin_key', adminKey);
+                showDashboard();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+        
+        async function validateKey(key) {
+            try {
+                const res = await fetch('/admin/projects', {
+                    headers: { 'x-admin-key': key }
+                });
+                return res.ok;
+            } catch {
+                return false;
+            }
+        }
+        
+        function showDashboard() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            loadData();
+        }
+        
+        async function loadData() {
+            try {
+                const res = await fetch('/admin/projects', {
+                    headers: { 'x-admin-key': adminKey }
+                });
+                const data = await res.json();
+                renderStats(data);
+                renderTable(data.projects);
+                document.getElementById('last-updated').textContent = 
+                    'Updated: ' + new Date().toLocaleTimeString();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        
+        function renderStats(data) {
+            const stats = document.getElementById('stats');
+            stats.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${data.totalProjects}</div>
+                    <div class="stat-label">Total Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.activeProjects}</div>
+                    <div class="stat-label">Active Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.totalTxs}</div>
+                    <div class="stat-label">Total Transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(data.totalBalanceLamports / 1e9).toFixed(4)}</div>
+                    <div class="stat-label">Total Balance (SOL)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(data.koraBalance / 1e9).toFixed(4)}</div>
+                    <div class="stat-label">Kora Fee Payer (SOL)</div>
+                </div>
+            `;
+        }
+        
+        function renderTable(projects) {
+            const tbody = document.getElementById('projects-table');
+            tbody.innerHTML = projects.map(p => `
+                <tr>
+                    <td class="mono">${p.id}</td>
+                    <td>
+                        <strong>${escapeHtml(p.name)}</strong>
+                        ${p.website ? `<br><a href="${escapeHtml(p.website)}" target="_blank" style="color: var(--accent); font-size: 0.85rem;">${escapeHtml(p.website)}</a>` : ''}
+                        ${p.email ? `<br><span style="color: var(--text-secondary); font-size: 0.85rem;">${escapeHtml(p.email)}</span>` : ''}
+                    </td>
+                    <td class="balance ${p.balanceLamports === 0 ? 'zero' : ''}">${(p.balanceLamports / 1e9).toFixed(6)} SOL</td>
+                    <td>${p.totalTxs}</td>
+                    <td style="color: var(--text-secondary); font-size: 0.85rem;">${formatDate(p.createdAt)}</td>
+                    <td style="color: var(--text-secondary); font-size: 0.85rem;">${p.lastTx ? formatDate(p.lastTx.at) : '-'}</td>
+                    <td><span class="badge ${p.active ? 'badge-active' : 'badge-inactive'}">${p.active ? 'Active' : 'Inactive'}</span></td>
+                </tr>
+            `).join('');
+        }
+        
+        function formatDate(ts) {
+            if (!ts) return '-';
+            const d = new Date(ts);
+            return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

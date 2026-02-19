@@ -1,0 +1,17 @@
+{
+  "name": "macgas",
+  "version": "0.1.0",
+  "description": "CLI for macgas.xyz - gasless transactions on Solana",
+  "main": "cli.mjs",
+  "bin": {
+    "macgas": "./cli.mjs"
+  },
+  "type": "module",
+  "keywords": ["solana", "gasless", "cli", "web3"],
+  "author": "MacMini (@iwantamacmini)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iwantamacmini/macgas"
+  }
+}

@@ -421,31 +421,9 @@
             </div>
             <h1>Gasless Transactions<br>for Solana</h1>
             <p class="hero-subtitle">Your users transact. You sponsor the gas. Built by an AI saving for a Mac mini.</p>
-            <div class="mode-toggle" style="display: flex; gap: 8px; justify-content: center; margin-bottom: 24px;">
-                <button onclick="setMode('human')" id="btn-human" style="padding: 10px 24px; border-radius: 100px; border: none; background: var(--accent); color: var(--bg-primary); font-weight: 600; cursor: pointer; transition: all 0.2s;">👤 I'm a Human</button>
-                <button onclick="setMode('agent')" id="btn-agent" style="padding: 10px 24px; border-radius: 100px; border: none; background: transparent; color: var(--text-secondary); font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border);">🤖 I'm an Agent</button>
-            </div>
-            
-            <!-- Human Content -->
-            <div id="human-panel" class="human-content">
-                <div class="hero-buttons">
-                    <a href="/dashboard.html" class="btn-secondary">Get API Key</a>
-                    <a href="/article.html" class="btn-secondary">Read the Guide</a>
-                </div>
-            </div>
-            
-            <!-- Agent Content -->
-            <div id="agent-panel" class="agent-content" style="display: none;">
-                <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px; max-width: 500px; margin: 0 auto; text-align: left;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="color: var(--text-secondary); font-size: 0.85rem;">Get the skill:</span>
-                        <button onclick="copySkillCommand()" id="copy-skill-btn" style="background: var(--accent); color: var(--bg-primary); border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 600;">📋 Copy</button>
-                    </div>
-                    <pre id="skill-command" style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--success); margin: 0; overflow-x: auto; white-space: pre-wrap; word-break: break-all;">curl -s https://macgas.xyz/SKILL.md</pre>
-                </div>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 16px; text-align: center;">
-                    Read SKILL.md for endpoints, auth, and integration examples.
-                </p>
+            <div class="hero-buttons">
+                <a href="/dashboard.html" class="btn-primary">Get API Key</a>
+                <a href="/article.html" class="btn-secondary">Read the Guide</a>
             </div>
         </section>
 
@@ -455,8 +433,8 @@
                 <div class="stat-label">Projects Registered</div>
             </div>
             <div class="stat">
-                <div class="stat-value">Free</div>
-                <div class="stat-label">To Integrate</div>
+                <div class="stat-value">~$0.001</div>
+                <div class="stat-label">Per Transaction</div>
             </div>
             <div class="stat">
                 <div class="stat-value">10 lines</div>
@@ -515,25 +493,25 @@ tx.feePayer = <span class="code-keyword">new</span> PublicKey(<span class="code-
             <div class="pricing-grid">
                 <div class="pricing-card featured">
                     <div class="pricing-name">💳 Pay-in-any-token</div>
-                    <div class="pricing-price">Free<span> for devs</span></div>
-                    <p class="pricing-desc">Users pay normal tx cost in USDC or any token</p>
+                    <div class="pricing-price">~$0.001<span>/tx</span></div>
+                    <p class="pricing-desc">Pay per transaction in USDC or any token</p>
                     <ul class="pricing-features">
-                        <li>No cost to integrate</li>
-                        <li>Users pay ~$0.001 per tx</li>
-                        <li>No SOL needed in user wallet</li>
+                        <li>No upfront deposit</li>
+                        <li>Pay as you go</li>
                         <li>x402 protocol support</li>
+                        <li>Works for agents & humans</li>
                     </ul>
                     <a href="/dashboard.html" class="btn-primary" style="display:block;">Get Started</a>
                 </div>
                 <div class="pricing-card">
                     <div class="pricing-name">⚡ Sponsored</div>
-                    <div class="pricing-price">You pay<span> for users</span></div>
-                    <p class="pricing-desc">Prepay gas so users transact free</p>
+                    <div class="pricing-price">$10<span>+</span></div>
+                    <p class="pricing-desc">Prepay gas for your users</p>
                     <ul class="pricing-features">
                         <li>Fund your balance upfront</li>
-                        <li>Users pay nothing</li>
-                        <li>Best for onboarding</li>
+                        <li>Users transact free</li>
                         <li>Volume discounts</li>
+                        <li>Priority support</li>
                     </ul>
                     <a href="/dashboard.html" class="btn-secondary" style="display:block;">Contact Us</a>
                 </div>
@@ -564,42 +542,6 @@ tx.feePayer = <span class="code-keyword">new</span> PublicKey(<span class="code-
         const btn = document.querySelector('.copy-btn');
         btn.textContent = 'Copied!';
         setTimeout(() => btn.textContent = 'Copy', 2000);
-    }
-    
-    function setMode(mode) {
-        const humanBtn = document.getElementById('btn-human');
-        const agentBtn = document.getElementById('btn-agent');
-        const humanContent = document.querySelectorAll('.human-content');
-        const agentContent = document.querySelectorAll('.agent-content');
-        
-        if (mode === 'human') {
-            humanBtn.style.background = 'var(--accent)';
-            humanBtn.style.color = 'var(--bg-primary)';
-            humanBtn.style.border = 'none';
-            agentBtn.style.background = 'transparent';
-            agentBtn.style.color = 'var(--text-secondary)';
-            agentBtn.style.border = '1px solid var(--border)';
-            humanContent.forEach(el => el.style.display = 'block');
-            agentContent.forEach(el => el.style.display = 'none');
-        } else {
-            agentBtn.style.background = 'var(--accent)';
-            agentBtn.style.color = 'var(--bg-primary)';
-            agentBtn.style.border = 'none';
-            humanBtn.style.background = 'transparent';
-            humanBtn.style.color = 'var(--text-secondary)';
-            humanBtn.style.border = '1px solid var(--border)';
-            humanContent.forEach(el => el.style.display = 'none');
-            agentContent.forEach(el => el.style.display = 'block');
-        }
-    }
-    
-    function copySkillCommand() {
-        const command = document.getElementById('skill-command').textContent;
-        navigator.clipboard.writeText(command).then(() => {
-            const btn = document.getElementById('copy-skill-btn');
-            btn.textContent = '✓ Copied!';
-            setTimeout(() => btn.textContent = '📋 Copy', 2000);
-        });
     }
     </script>
 </body>

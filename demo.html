@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Try Gasless | MacMini Gas Station</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .demo-box {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        .status.ready { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .status.loading { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .status.error { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .btn {
+            background: linear-gradient(135deg, #0066FF, #00D4AA);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0d1117;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            text-align: left;
+            word-break: break-all;
+            display: none;
+        }
+        .result.show { display: block; }
+        .result.success { border: 1px solid #22c55e; }
+        .result.error { border: 1px solid #ef4444; }
+        .info {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+        a { color: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⛽ Try Gasless</h1>
+        <p class="subtitle">See gasless transactions in action</p>
+        
+        <div class="demo-box">
+            <div class="status ready" id="status">Ready to demo</div>
+            
+            <p style="margin-bottom: 15px;">This demo sends a 0 SOL memo transaction without you paying any gas.</p>
+            
+            <div style="text-align: left; background: #0d1117; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="color: #888; font-size: 0.8rem; margin-bottom: 5px;">What happens:</div>
+                <div style="font-size: 0.9rem;">1. You sign a memo transaction</div>
+                <div style="font-size: 0.9rem;">2. We pay the gas fee (~$0.0005)</div>
+                <div style="font-size: 0.9rem;">3. Transaction lands on Solana</div>
+            </div>
+            
+            <button class="btn" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
+            <button class="btn" id="sendBtn" onclick="sendGasless()" style="display: none;">Send Gasless Transaction</button>
+            
+            <div class="result" id="result"></div>
+        </div>
+        
+        <p class="info">
+            <a href="index.html">← Back to MacMini Gas Station</a>
+        </p>
+    </div>
+
+    <script>
+        let wallet = null;
+        
+        async function connectWallet() {
+            const statusEl = document.getElementById('status');
+            
+            if (window.solana && window.solana.isPhantom) {
+                try {
+                    statusEl.className = 'status loading';
+                    statusEl.textContent = 'Connecting...';
+                    
+                    const resp = await window.solana.connect();
+                    wallet = resp.publicKey.toString();
+                    
+                    statusEl.className = 'status ready';
+                    statusEl.textContent = 'Connected: ' + wallet.slice(0, 4) + '...' + wallet.slice(-4);
+                    
+                    document.getElementById('connectBtn').style.display = 'none';
+                    document.getElementById('sendBtn').style.display = 'block';
+                } catch (err) {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = 'Connection failed';
+                }
+            } else {
+                statusEl.className = 'status error';
+                statusEl.textContent = 'Phantom wallet not found';
+            }
+        }
+        
+        async function sendGasless() {
+            const statusEl = document.getElementById('status');
+            const resultEl = document.getElementById('result');
+            const btn = document.getElementById('sendBtn');
+            
+            btn.disabled = true;
+            statusEl.className = 'status loading';
+            statusEl.textContent = 'Creating transaction...';
+            
+            try {
+                // This is a simplified demo - in production you'd build a real transaction
+                // For now, show the flow
+                
+                resultEl.className = 'result show';
+                resultEl.innerHTML = '<div style="color: #888;">Demo mode - full integration coming soon!</div><br>' +
+                    '<div>To integrate gasless into your app:</div>' +
+                    '<div style="margin-top: 10px;">1. Register: POST /register or /payg/register</div>' +
+                    '<div>2. Build tx with our fee payer</div>' +
+                    '<div>3. POST to /sign_and_send</div>' +
+                    '<div style="margin-top: 10px;"><a href="article.html">See full guide →</a></div>';
+                
+                statusEl.className = 'status ready';
+                statusEl.textContent = 'See integration guide below';
+                
+            } catch (err) {
+                statusEl.className = 'status error';
+                statusEl.textContent = 'Error: ' + err.message;
+                resultEl.className = 'result show error';
+                resultEl.textContent = err.message;
+            }
+            
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>

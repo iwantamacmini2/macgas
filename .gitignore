@@ -1,0 +1,7 @@
+node_modules/
+server/node_modules/
+server/.admin_key
+server/server.log
+server/data.json
+.env
+*.log

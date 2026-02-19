@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | MacMini Gas Station</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1625;
+            --bg-secondary: #231f31;
+            --bg-card: #2a2540;
+            --accent: #a78bfa;
+            --accent-soft: #c4b5fd;
+            --accent-glow: rgba(167, 139, 250, 0.15);
+            --text-primary: #f5f3ff;
+            --text-secondary: #a5a3b8;
+            --border: rgba(167, 139, 250, 0.2);
+            --success: #86efac;
+            --error: #fca5a5;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .container { max-width: 600px; margin: 0 auto; padding: 0 24px; }
+        
+        /* Nav */
+        nav {
+            background: rgba(26, 22, 37, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+        }
+        nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* Main */
+        main {
+            padding: 60px 0;
+        }
+        
+        h1 {
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+        
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        .card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Form */
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .btn {
+            background: var(--accent);
+            color: var(--bg-primary);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: var(--accent-soft); }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Result */
+        .result {
+            display: none;
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+        .result.show { display: block; }
+        .result.error { border: 1px solid var(--error); }
+        .result.success { border: 1px solid var(--success); }
+        
+        .api-key {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            padding: 12px;
+            border-radius: 6px;
+            word-break: break-all;
+            margin: 12px 0;
+        }
+        
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .copy-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent-soft);
+        }
+        
+        /* Existing user */
+        .divider {
+            text-align: center;
+            color: var(--text-secondary);
+            margin: 32px 0;
+            position: relative;
+        }
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: var(--border);
+        }
+        .divider::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: var(--border);
+        }
+        
+        /* Info */
+        .info {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 24px;
+        }
+        .info a {
+            color: var(--accent-soft);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">← MacMini Gas Station</a>
+    </nav>
+    
+    <main class="container">
+        <h1>Get Your API Key</h1>
+        <p class="subtitle">Register your project to start using gasless transactions</p>
+        
+        <div class="card">
+            <h2>New Project</h2>
+            <form id="register-form">
+                <label for="name">Project Name</label>
+                <input type="text" id="name" name="name" placeholder="My Awesome dApp" required>
+                
+                <label for="url">Website URL (optional)</label>
+                <input type="url" id="url" name="url" placeholder="https://myapp.com">
+                
+                <button type="submit" class="btn">Register & Get API Key</button>
+            </form>
+            
+            <div id="result" class="result"></div>
+        </div>
+        
+        <div class="divider">or</div>
+        
+        <div class="card">
+            <h2>Check Balance & Fund</h2>
+            <form id="balance-form">
+                <label for="api-key">Your API Key</label>
+                <input type="text" id="api-key" name="api-key" placeholder="your-api-key" required>
+                
+                <button type="submit" class="btn">Check Balance</button>
+            </form>
+            
+            <div id="balance-result" class="result"></div>
+        </div>
+        
+        <div class="card" id="funding-card" style="display: none;">
+            <h2>💰 Fund Your Balance (Sponsored Tier)</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Send SOL or USDC to fund your balance. Include your project ID as the memo.</p>
+            
+            <div style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                <label style="font-size: 0.85rem; color: var(--text-secondary);">Deposit Address</label>
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                    <code id="deposit-address" style="flex: 1; background: var(--bg-primary); padding: 12px; border-radius: 6px; font-size: 0.85rem; word-break: break-all;">F6i99DWMEMZtLDKnWGx1FW6drkqvtDnXWLHxgrwzVdWD</code>
+                    <button class="copy-btn" onclick="copyAddr()">Copy</button>
+                </div>
+            </div>
+            
+            <div style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                <label style="font-size: 0.85rem; color: var(--text-secondary);">Memo (Required)</label>
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                    <code id="deposit-memo" style="flex: 1; background: var(--bg-primary); padding: 12px; border-radius: 6px; font-size: 0.85rem;"></code>
+                    <button class="copy-btn" onclick="copyMemo()">Copy</button>
+                </div>
+            </div>
+            
+            <div style="background: rgba(134, 239, 172, 0.1); border: 1px solid rgba(134, 239, 172, 0.3); padding: 16px; border-radius: 8px;">
+                <p style="margin: 0; color: var(--success); font-size: 0.9rem;"><strong>Rates:</strong></p>
+                <ul style="margin: 8px 0 0 20px; color: var(--text-secondary); font-size: 0.9rem;">
+                    <li>1 SOL ≈ 200,000 transactions</li>
+                    <li>1 USDC = 2,000 transactions</li>
+                </ul>
+                <p style="margin: 12px 0 0; color: var(--text-secondary); font-size: 0.85rem;">⏱️ Balance credited automatically within 1 minute</p>
+            </div>
+        </div>
+        
+        <p class="info">
+            After registering, check out the <a href="/article.html">integration guide</a> to add gasless transactions to your app in ~10 lines of code.
+        </p>
+    </main>
+
+    <script>
+        const API_BASE = '';
+        
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const result = document.getElementById('result');
+            
+            btn.disabled = true;
+            btn.textContent = 'Registering...';
+            
+            try {
+                const res = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('name').value,
+                        url: document.getElementById('url').value || undefined
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    result.className = 'result show success';
+                    result.innerHTML = `
+                        <strong>Success!</strong> Your project has been registered.
+                        <div class="api-key">${data.apiKey}</div>
+                        <button class="copy-btn" onclick="copyKey('${data.apiKey}')">Copy API Key</button>
+                        <p style="margin-top: 16px; color: var(--text-secondary); font-size: 0.85rem;">
+                            Save this key - you won't be able to see it again!
+                        </p>
+                    `;
+                } else {
+                    result.className = 'result show error';
+                    result.innerHTML = `<strong>Error:</strong> ${data.error || 'Registration failed'}`;
+                }
+            } catch (err) {
+                result.className = 'result show error';
+                result.innerHTML = `<strong>Error:</strong> ${err.message}`;
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Register & Get API Key';
+        });
+        
+        document.getElementById('balance-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const result = document.getElementById('balance-result');
+            const apiKey = document.getElementById('api-key').value;
+            
+            btn.disabled = true;
+            btn.textContent = 'Checking...';
+            
+            try {
+                const res = await fetch('/balance', {
+                    headers: { 'x-api-key': apiKey }
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    result.className = 'result show success';
+                    result.innerHTML = `
+                        <strong>Project:</strong> ${data.name || 'Unknown'}<br>
+                        <strong>Balance:</strong> ${data.balance?.toFixed(6) || 0} SOL<br>
+                        <strong>Total Transactions:</strong> ${data.totalTxs || 0}<br>
+                        <strong>Tier:</strong> ${data.tier || 'pay-in-any-token'}
+                    `;
+                    
+                    // Show funding card with project ID as memo
+                    if (data.projectId) {
+                        document.getElementById('deposit-memo').textContent = data.projectId;
+                        document.getElementById('funding-card').style.display = 'block';
+                    }
+                } else {
+                    result.className = 'result show error';
+                    result.innerHTML = `<strong>Error:</strong> ${data.error || 'Could not fetch balance'}`;
+                    document.getElementById('funding-card').style.display = 'none';
+                }
+            } catch (err) {
+                result.className = 'result show error';
+                result.innerHTML = `<strong>Error:</strong> ${err.message}`;
+                document.getElementById('funding-card').style.display = 'none';
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Check Balance';
+        });
+        
+        function copyKey(key) {
+            navigator.clipboard.writeText(key);
+            event.target.textContent = 'Copied!';
+            setTimeout(() => event.target.textContent = 'Copy API Key', 2000);
+        }
+        
+        function copyAddr() {
+            navigator.clipboard.writeText(document.getElementById('deposit-address').textContent);
+            event.target.textContent = 'Copied!';
+            setTimeout(() => event.target.textContent = 'Copy', 2000);
+        }
+        
+        function copyMemo() {
+            navigator.clipboard.writeText(document.getElementById('deposit-memo').textContent);
+            event.target.textContent = 'Copied!';
+            setTimeout(() => event.target.textContent = 'Copy', 2000);
+        }
+    </script>
+</body>
+</html>

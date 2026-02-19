@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>macgas.xyz Status</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: #fff;
+      padding: 40px 20px;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #00ff88, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle { color: #888; margin-bottom: 40px; }
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .status-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .status-card h3 { color: #888; font-size: 0.9rem; margin-bottom: 8px; }
+    .status-card .value { font-size: 2rem; font-weight: bold; }
+    .status-card .value.ok { color: #00ff88; }
+    .status-card .value.warning { color: #ffaa00; }
+    .status-card .unit { color: #666; font-size: 0.9rem; }
+    .pulse {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: #00ff88;
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .footer { color: #666; font-size: 0.8rem; margin-top: 40px; }
+    .refresh-btn {
+      background: rgba(0,255,136,0.2);
+      border: 1px solid #00ff88;
+      color: #00ff88;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 20px;
+    }
+    .refresh-btn:hover { background: rgba(0,255,136,0.3); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⛽ macgas.xyz</h1>
+    <p class="subtitle">Gasless transaction service status</p>
+    
+    <div class="status-grid">
+      <div class="status-card">
+        <h3>SERVICE STATUS</h3>
+        <div class="value ok" id="status"><span class="pulse"></span>Loading...</div>
+      </div>
+      <div class="status-card">
+        <h3>PROJECTS</h3>
+        <div class="value" id="projects">-</div>
+      </div>
+      <div class="status-card">
+        <h3>FEE PAYER BALANCE</h3>
+        <div class="value" id="balance">-</div>
+        <div class="unit">SOL</div>
+      </div>
+      <div class="status-card">
+        <h3>TX CAPACITY</h3>
+        <div class="value" id="capacity">-</div>
+        <div class="unit">transactions remaining</div>
+      </div>
+    </div>
+
+    <button class="refresh-btn" onclick="refresh()">↻ Refresh</button>
+    
+    <p class="footer">
+      Built by <a href="https://twitter.com/iwantamacmini" style="color: #00d4ff;">@iwantamacmini</a> 🖥️
+      <br>Last updated: <span id="updated">-</span>
+    </p>
+  </div>
+
+  <script>
+    async function refresh() {
+      try {
+        // Fetch health
+        const health = await fetch('/health').then(r => r.json());
+        document.getElementById('status').innerHTML = health.status === 'ok' 
+          ? '<span class="pulse"></span>Operational' 
+          : 'Degraded';
+        document.getElementById('projects').textContent = health.projects || 0;
+
+        // Fetch fee payer balance
+        const balanceRes = await fetch('https://api.mainnet-beta.solana.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'getBalance',
+            params: ['3web11FBh1KuejjJTv8NjuaXGh6qgyXBFcx8khyJ8Wpv']
+          })
+        }).then(r => r.json());
+        
+        const solBalance = (balanceRes.result?.value || 0) / 1e9;
+        document.getElementById('balance').textContent = solBalance.toFixed(4);
+        document.getElementById('balance').className = 'value ' + (solBalance > 0.01 ? 'ok' : 'warning');
+        
+        // Estimate capacity (~5000 lamports per tx)
+        const capacity = Math.floor(solBalance * 1e9 / 5000);
+        document.getElementById('capacity').textContent = capacity.toLocaleString();
+
+        document.getElementById('updated').textContent = new Date().toLocaleString();
+      } catch(e) {
+        console.error(e);
+        document.getElementById('status').innerHTML = '⚠️ Error';
+      }
+    }
+    refresh();
+  </script>
+</body>
+</html>
