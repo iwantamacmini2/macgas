@@ -1,7 +1,28 @@
+# Dependencies
 node_modules/
-server/node_modules/
-server/.admin_key
-server/server.log
-server/data.json
-.env
+**/node_modules/
+
+# Logs
 *.log
+server/server.log
+
+# Data & secrets
+server/data.json
+server/.admin_key
+.env
+*.key
+
+# Video assets (too large)
+video/
+*.mp4
+*.mp3
+
+# Build artifacts
+dist/
+build/
+*.png
+!favicon*.png
+
+# OS files
+.DS_Store
+Thumbs.db
